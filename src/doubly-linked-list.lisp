@@ -38,12 +38,30 @@
          :accessor dlist-size
          :documentation "The number of elements in the list.")))
 
+(defmethod print-object ((dl dlist) stream)
+  (print-unreadable-object (dl stream :type t :identity t)
+    (format stream "~a" (dlist-get-elements dl))))
+
 (defun make-dlist ()
   (make-instance 'dlist))
 
 (defmethod dlist-empty-p ((dl dlist))
   "Checks if a DL is empty. T if empty. NIL otherwise."
   (= (dlist-size dl) 0))
+
+(defmethod dlist-add-element-at ((dl dlist) value index)
+  "Adds an element with VALUE at INDEX in DL."
+  (declare (optimize (speed 0) (debug 3)))
+  (%dlist-check-index dl index)
+  (cond
+    ((= index 0) (dlist-add-element-front dl value))
+    ((= index (%dlist-max-index dl)) (dlist-add-element-end dl value))
+    (t (let ((element (make-dlist-element value nil nil))
+             (o-element (dlist-get-element dl index)))
+         (%dlist-link-elements (dlist-element-previous o-element) element)
+         (%dlist-link-elements element o-element)
+         (incf (dlist-size dl)))))
+  dl)
 
 (defmethod dlist-add-element-end ((dl dlist) value)
   "Adds an element with VALUE to the end of DL."
@@ -66,26 +84,37 @@
     dl))
 
 (defmethod %dlist-check-index ((dl dlist) index)
-  (when (>= index (dlist-size dl))
-    (error "Index has to be between 0 and ~a." (- (dlist-size dl) 1)))
+  (when (> index (%dlist-max-index dl))
+    (error "Index has to be between 0 and ~a." (%dlist-max-index dl)))
   (when (< index 0)
     (error "Index has to be positive.")))
 
-(defmacro do-dlist ((node-var index-var) dlist &body body)
+(defmethod %dlist-max-index ((dl dlist))
+  (max 0
+       (- (dlist-size dl) 1)))
+
+
+(defmacro %do-dlist ((node-var index-var) dlist &body body)
   `(loop :for ,node-var = (dlist-first ,dlist) :then (dlist-element-next ,node-var)
          :for ,index-var :from 0 :below (dlist-size ,dlist)
          :do ,@body))
 
+(defmethod dlist-get-elements ((dl dlist))
+  (let ((elements '()))
+    (%do-dlist  (node i) dl
+      (push (dlist-element-value node) elements))
+    (reverse elements)))
+
 (defmethod dlist-get-element ((dl dlist) index)
   "Returns the element at INDEX from the DL. Throws error if INDEX < 0 or INDEX >= size of dlist."
   (%dlist-check-index dl index)
-  (do-dlist (node i) dl
+  (%do-dlist (node i) dl
     (when (= i index)
       (return node))))
 
 (defmethod dlist-find-element ((dl dlist) element &key (test #'eql))
   "Returns the index of the first occurence of ELEMENT in DL. NIL otherwise. TEST is used to test the equality of the elements."
-  (do-dlist (node i) dl
+  (%do-dlist (node i) dl
     (when (funcall test (dlist-element-value node) element)
       (return-from dlist-find-element i)))
   nil)
