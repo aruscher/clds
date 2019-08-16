@@ -50,8 +50,7 @@
   (= (dlist-size dl) 0))
 
 (defmethod dlist-add-element-at ((dl dlist) value index)
-  "Adds an element with VALUE at INDEX in DL."
-  (declare (optimize (speed 0) (debug 3)))
+  "Adds an element with VALUE at INDEX in DL. Throws error if INDEX < 0 or INDEX >= size of DL."
   (%dlist-check-index dl index)
   (cond
     ((= index 0) (dlist-add-element-front dl value))
@@ -61,6 +60,20 @@
          (%dlist-link-elements (dlist-element-previous o-element) element)
          (%dlist-link-elements element o-element)
          (incf (dlist-size dl)))))
+  dl)
+
+
+
+(defmethod dlist-remove-element-at ((dl dlist) index)
+  "Remove an element at INDEX in DL. Throws error if INDEX < 0 or INDEX >= size of DL."
+  (%dlist-check-index dl index)
+  (cond
+    ((= index 0) (dlist-remove-element-front dl))
+    ((= index (%dlist-max-index dl)) (dlist-remove-element-end dl))
+    (t (let ((element (dlist-get-element dl index)))
+         (%dlist-link-elements (dlist-element-previous element)
+                               (dlist-element-next element))
+         (decf (dlist-size dl)))))
   dl)
 
 (defmethod dlist-add-element-end ((dl dlist) value)
@@ -82,6 +95,32 @@
     (setf (dlist-first dl) element)
     (incf (dlist-size dl))
     dl))
+
+(defmethod dlist-remove-element-end ((dl dlist))
+  "Removes the last element from DL. Throws error if list is empty."
+  (when (dlist-empty-p dl)
+    (error "Cant remove from empty dlist."))
+  (let* ((element (dlist-last dl))
+         (prev-element (dlist-element-previous element)))
+    (when (= (dlist-size dl) 1)
+      (setf (dlist-last dl) nil))
+    (setf (dlist-last dl) prev-element)
+    (setf (dlist-element-next prev-element) nil)
+    (decf (dlist-size dl)))
+  dl)
+
+(defmethod dlist-remove-element-front ((dl dlist))
+  "Removes the first element from DL. Throws error if list is empty."
+  (when (dlist-empty-p dl)
+    (error "Cant remove from empty dlist."))
+  (let* ((element (dlist-first dl))
+         (next-element (dlist-element-next element)))
+    (when (= (dlist-size dl) 1)
+      (setf (dlist-last dl) nil))
+    (setf (dlist-first dl) next-element)
+    (setf (dlist-element-previous next-element) nil)
+    (decf (dlist-size dl)))
+  dl)
 
 (defmethod %dlist-check-index ((dl dlist) index)
   (when (> index (%dlist-max-index dl))
@@ -118,9 +157,3 @@
     (when (funcall test (dlist-element-value node) element)
       (return-from dlist-find-element i)))
   nil)
-
-(defparameter *dl* (make-dlist))
-(dlist-add-element-end *dl* 1)
-(dlist-add-element-end *dl* 2)
-(dlist-add-element-end *dl* 3)
-(dlist-add-element-end *dl* 2)
