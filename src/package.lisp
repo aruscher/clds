@@ -10,6 +10,7 @@
    #:dlist-add-element-at
    #:dlist-add-element-front
    #:dlist-add-element-end
+   #:dlist-add-elements
    #:dlist-remove-element-at
    #:dlist-remove-element-front
    #:dlist-remove-element-end

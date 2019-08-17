@@ -98,6 +98,11 @@
     (incf (%dlist-size dl))
     dl))
 
+(defmethod dlist-add-elements ((dl dlist) &rest values)
+  "Adds the VALUES one after another to the end of DL."
+  (dolist (value values)
+    (dlist-add-element-end dl value)))
+
 (defmethod dlist-remove-element-end ((dl dlist))
   "Removes the last element from DL. Throws error if list is empty."
   (when (dlist-empty-p dl)
