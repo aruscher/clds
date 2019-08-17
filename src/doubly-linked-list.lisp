@@ -56,17 +56,15 @@
 (defmethod dlist-add-element-at ((dl dlist) value index)
   "Adds an element with VALUE at INDEX in DL. Throws error if INDEX < 0 or INDEX >= size of DL."
   (%dlist-check-index dl index)
-  (cond
-    ((= index 0) (dlist-add-element-front dl value))
-    ((= index (%dlist-max-index dl)) (dlist-add-element-end dl value))
-    (t (let ((element (make-dlist-element value nil nil))
-             (o-element (dlist-get-element dl index)))
-         (%dlist-link-elements (%dlist-element-previous o-element) element)
-         (%dlist-link-elements element o-element)
-         (incf (%dlist-size dl)))))
+  (if (= index 0)
+      (dlist-add-element-front dl value)
+      (progn
+        (let ((element (make-dlist-element value nil nil))
+              (o-element (dlist-get-element dl index)))
+          (%dlist-link-elements (%dlist-element-previous o-element) element)
+          (%dlist-link-elements element o-element)
+          (incf (%dlist-size dl)))))
   dl)
-
-
 
 (defmethod dlist-remove-element-at ((dl dlist) index)
   "Remove an element at INDEX in DL. Throws error if INDEX < 0 or INDEX >= size of DL."
