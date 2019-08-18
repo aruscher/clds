@@ -33,7 +33,7 @@
     (stack-pop-element s)
     (signals error (stack-peek-element s))))
 
-(test stack-peek-element-test
+(test stack-get-elements-test
   (let ((s (make-stack)))
     (is (equal (stack-get-elements s) '()))
     (stack-push-element s 1)
