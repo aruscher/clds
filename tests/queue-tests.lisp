@@ -52,3 +52,22 @@
     (queue-enqueue-element q 2)
     (is (= (queue-peek-element q) 1))
     (is (equal (queue-get-elements q) '(1 2)))))
+
+(test queue-enqueue-elements-test
+  (let ((q (make-queue)))
+    (queue-enqueue-element q 1)
+    (is (= (queue-peek-element q) 1))
+    (is (equal (queue-get-elements q) '(1)))
+    (queue-enqueue-elements q 2 3 4 5)
+    (is (equal (queue-get-elements q) '(1 2 3 4 5)))))
+
+(test queue-dequeue-element-test
+  (let ((q (make-queue)))
+    (queue-enqueue-elements q 1 2 3 4)
+    (is (equal (queue-get-elements q) '(1 2 3 4)))
+    (is (= (queue-dequeue-element q) 1))
+    (is (= (queue-dequeue-element q) 2))
+    (is (= (queue-dequeue-element q) 3))
+    (is (= (queue-dequeue-element q) 4))
+    (signals error (queue-dequeue-element q))))
+

@@ -41,6 +41,7 @@
     (queue-enqueue-element q element)))
 
 (defmethod queue-dequeue-element ((q queue))
+  "Returns the first element in Q and removes it. Throws error if Q is empty."
   (when (queue-empty-p q)
     (error "Cant dequeue from empty queue."))
   (let ((rv (queue-peek-element  q)))
