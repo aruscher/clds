@@ -23,10 +23,11 @@
    #:make-queue
    #:queue-size
    #:queue-empty-p
-   #:queue-peek
+   #:queue-peek-element
+   #:queue-get-elements
    #:queue-enqueue-element
    #:queue-enqueue-elements
-   #:queue-dequeue
+   #:queue-dequeue-element
 
 
    ))

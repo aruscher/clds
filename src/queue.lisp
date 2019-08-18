@@ -21,21 +21,28 @@
   "Return t if queue is empty, nil otherwise."
   (dlist-empty-p (queue-content q)))
 
-(defmethod queue-peek ((q queue))
+(defmethod queue-peek-element ((q queue))
+  "Return the first element of Q. Throws error if Q is empty."
   (when (queue-empty-p q)
     (error "Cant peek on empty queue."))
   (dlist-get-element-front (queue-content q)))
 
+(defmethod queue-get-elements ((q queue))
+  "Returns all elements in Q."
+  (dlist-get-elements (queue-content q)))
+
 (defmethod queue-enqueue-element ((q queue) element)
+  "Enqueues ELEMENT in Q."
   (dlist-add-element-end (queue-content q) element))
 
 (defmethod queue-enqueue-elements ((q queue) &rest elements)
+  "Enqueues the ELEMENTS in Q."
   (dolist (element elements)
     (queue-enqueue-element q element)))
 
-(defmethod queue-dequeue ((q queue))
+(defmethod queue-dequeue-element ((q queue))
   (when (queue-empty-p q)
     (error "Cant dequeue from empty queue."))
-  (let ((rv (queue-peek  q)))
+  (let ((rv (queue-peek-element  q)))
     (dlist-remove-element-front (queue-content q))
     rv))
