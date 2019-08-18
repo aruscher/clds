@@ -27,13 +27,16 @@
   (dlist-get-elements (%stack-content s)))
 
 (defmethod stack-push-element ((s stack) element)
+  "Pushes ELEMENT to the top of S."
   (dlist-add-element-front (%stack-content s) element))
 
 (defmethod stack-push-elements ((s stack) &rest elements)
+  "Pushes ELEMENTS one after another on top of S."
   (dolist (element elements)
     (stack-push-element s element)))
 
 (defmethod stack-pop-element ((s stack))
+  "Returns and removed the top element of S. Throws error if S is empty."
   (when (stack-empty-p s)
     (error "Cant pop from empty stack"))
   (let ((rv (dlist-get-element-front (%stack-content s))))
