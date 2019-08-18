@@ -60,7 +60,7 @@
       (dlist-add-element-front dl value)
       (progn
         (let ((element (make-dlist-element value nil nil))
-              (o-element (dlist-get-element dl index)))
+              (o-element (%dlist-get-element-node-at dl index)))
           (%dlist-link-elements (%dlist-element-previous o-element) element)
           (%dlist-link-elements element o-element)
           (incf (%dlist-size dl)))))
@@ -72,7 +72,7 @@
   (cond
     ((= index 0) (dlist-remove-element-front dl))
     ((= index (%dlist-max-index dl)) (dlist-remove-element-end dl))
-    (t (let ((element (dlist-get-element dl index)))
+    (t (let ((element (%dlist-get-element-node-at dl index)))
          (%dlist-link-elements (%dlist-element-previous element)
                                (%dlist-element-next element))
          (decf (%dlist-size dl)))))
@@ -147,6 +147,7 @@
          :do ,@body))
 
 (defmethod dlist-get-elements ((dl dlist))
+  "Return a list of all elements in DL."
   (let ((elements '()))
     (%do-dlist  (node i) dl
       (push (%dlist-element-value node) elements))
@@ -154,19 +155,23 @@
 
 
 (defmethod dlist-get-element-front ((dl dlist))
-  "Returns the first element in DL"
+  "Returns the first element in DL. Throws error if DL is empty."
+  (when (dlist-empty-p dl)
+    (error "Cant get first element of empty list"))
   (%dlist-element-value (%dlist-first dl)))
 
-(defmethod dlist-get-element-last ((dl dlist))
-  "Returns the last element in DL"
+(defmethod dlist-get-element-end ((dl dlist))
+  "Returns the last element in DL. Throws error if DL is empty."
+  (when (dlist-empty-p dl)
+    (error "Cant get last element of empty list"))
   (%dlist-element-value (%dlist-last dl)))
 
 (defmethod dlist-get-element-at ((dl dlist) index)
-  (%dlist-element-value (dlist-get-element dl index)))
-
-(defmethod dlist-get-element ((dl dlist) index)
   "Returns the element at INDEX from the DL. Throws error if INDEX < 0 or INDEX >= size of dlist."
   (%dlist-check-index dl index)
+  (%dlist-element-value (%dlist-get-element-node-at dl index)))
+
+(defmethod %dlist-get-element-node-at ((dl dlist) index)
   (%do-dlist (node i) dl
     (when (= i index)
       (return node))))
@@ -177,11 +182,3 @@
     (when (funcall test (%dlist-element-value node) element)
       (return-from dlist-find-element i)))
   nil)
-
-(defparameter *dl* (make-dlist))
-(dlist-add-element-end *dl* 1)
-;; (dlist-add-element-end *dl* 2)
-;; (dlist-add-element-end *dl* 3)
-;; (dlist-add-element-end *dl* 4)
-;; (dlist-add-element-end *dl* 5)
-

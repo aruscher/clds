@@ -12,4 +12,5 @@
                 :components
                 ((:file "package")
                  (:file "clds-tests")
-                 (:file "doubly-linked-list-tests")))))
+                 (:file "doubly-linked-list-tests")
+                 (:file "queue-tests")))))

@@ -11,4 +11,6 @@
                 :components
                 ((:file "package")
                  (:file "doubly-linked-list")
+                 (:file "queue")
+                 (:file "stack")
                  (:file "clds")))))

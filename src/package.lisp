@@ -19,4 +19,14 @@
    #:dlist-get-element-front
    #:dlist-get-element-end
    #:dlist-find-element
+   ;Queue
+   #:make-queue
+   #:queue-size
+   #:queue-empty-p
+   #:queue-peek
+   #:queue-enqueue-element
+   #:queue-enqueue-elements
+   #:queue-dequeue
+
+
    ))
