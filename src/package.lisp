@@ -3,7 +3,7 @@
 (defpackage #:clds
   (:use #:cl)
   (:export
-   ;Doubly-linked-list
+   ; Doubly-linked-list
    #:make-dlist
    #:dlist-size
    #:dlist-empty-p
@@ -19,7 +19,7 @@
    #:dlist-get-element-front
    #:dlist-get-element-end
    #:dlist-find-element
-   ;Queue
+   ; Queue
    #:make-queue
    #:queue-size
    #:queue-empty-p
@@ -28,6 +28,15 @@
    #:queue-enqueue-element
    #:queue-enqueue-elements
    #:queue-dequeue-element
+   ; Stack
+   #:make-stack
+   #:stack-size
+   #:stack-empty-p
+   #:stack-peek-element
+   #:stack-get-elements
+   #:stack-push-element
+   #:stack-push-elements
+   #:stack-pop-element
 
 
    ))

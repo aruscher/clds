@@ -13,4 +13,5 @@
                 ((:file "package")
                  (:file "clds-tests")
                  (:file "doubly-linked-list-tests")
-                 (:file "queue-tests")))))
+                 (:file "queue-tests")
+                 (:file "stack-tests")))))
